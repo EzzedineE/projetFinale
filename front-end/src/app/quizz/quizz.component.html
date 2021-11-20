@@ -1,0 +1,140 @@
+<div class="text-center container mt-5">
+  <main class="form-signin">
+    <div><i class="fab fa-quinscape fa-5x text-warning"></i></div>
+    <h1 class="h3 my-5 fw-normal text-success">Ajouter des Quizz</h1>
+    <!-- formgroup quizz -->
+    <form [formGroup]="quizz" (ngSubmit)="add()">
+      <!--formcontrol titre  -->
+      <div class="form-floating my-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder=""
+          formControlName="titre"
+        />
+        <div
+          *ngIf="quizz.controls.titre.invalid && quizz.controls.titre.touched"
+        >
+          <small
+            *ngIf="quizz.controls.titre.errors?.required"
+            class="text-danger text-start"
+            >titre required</small
+          >
+        </div>
+        <label for="floatingInput">Titre de Quizz</label>
+      </div>
+      <!-- ************************************************************************************* -->
+      <!-- formarray -->
+      <div
+        formArrayName="questions"
+        *ngFor="let quest of questions().controls; let i = index"
+      >
+        <!-- formgroup -->
+        <div [formGroupName]="i">
+          <!-- formcontrol question-->
+          <div class="form-floating my-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder=""
+              formControlName="question"
+            />
+            <div
+              *ngIf="
+                getOneQuestions(i).controls.question.invalid &&
+                getOneQuestions(i).controls.question.touched
+              "
+            >
+              <small
+                *ngIf="getOneQuestions(i).controls.question.errors?.required"
+                class="text-danger text-start"
+                >question required</small
+              >
+            </div>
+            <label for="floatingInput">question de Quizz</label>
+          </div>
+          <!-- formcontrol bonne reponse-->
+          <div
+            *ngIf="getOneQuestions(i).controls.bonnereponse.value !== null"
+            class="border rounded px-2"
+          >
+            <h4 class="text-start">
+              La bonne reponse est :{{
+                getOneReponse(i, getOneQuestions(i).controls.bonnereponse.value)
+              }}
+            </h4>
+          </div>
+          <!-- formarray reponse -->
+          <div>
+            <div
+              class="form-floating my-3"
+              formArrayName="reponses"
+              *ngFor="let reponse of reponses(i).controls; let j = index"
+            >
+              <div class="input-group">
+                <div class="input-group-text">
+                  <input
+                    class="form-check-input mt-0"
+                    type="radio"
+                    aria-label="Radio button for following text
+        input"
+                    [name]="i"
+                    (change)="bonneReponse(i, j)"
+                    [disabled]="reponse.invalid"
+                  />
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  aria-label="Text input with radio button"
+                  [formControlName]="j"
+                  placeholder="reponse {{ j + 1 }}"
+                />
+                <button
+                  class="btn btn-danger w-25"
+                  type="button"
+                  (click)="removeReponse(i, j)"
+                >
+                  delete
+                </button>
+              </div>
+              <div *ngIf="reponse.invalid && reponse.touched">
+                <small
+                  *ngIf="reponse.errors?.required"
+                  class="text-danger text-start"
+                  >reponse required</small
+                >
+              </div>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary d-flex justify-content-start my-2"
+            type="button"
+            (click)="addReponse(i)"
+          >
+            Ajouter reponse
+          </button>
+        </div>
+        <hr class="my-4" />
+      </div>
+      <button
+        class="btn btn-primary d-flex justify-content-start my-2"
+        type="button"
+        (click)="addQuestion()"
+      >
+        Ajouter question
+      </button>
+      <!-- ***************************************************** -->
+
+      <!-- button quizz -->
+      <hr class="my-4" />
+      <button
+        class="w-25 btn btn-lg btn-success"
+        type="submit"
+        [disabled]="quizz.invalid"
+      >
+        Ajouter quizz
+      </button>
+    </form>
+  </main>
+</div>
