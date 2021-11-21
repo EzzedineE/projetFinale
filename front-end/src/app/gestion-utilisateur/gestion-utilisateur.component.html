@@ -13,6 +13,14 @@
     >
       <div class="border container rounded-3 bg-white py-3">
         <div>
+          <div>
+            <!-- id="{{'Clear ' + myVar.id}}" -->
+
+            <img
+              src="{{ 'http://localhost:4000/static/' + user.image }}"
+              alt="userImage"
+            />
+          </div>
           <div class="ml-3 container bg-white">
             <p><b>Nom : </b>{{ user.nom }}</p>
           </div>

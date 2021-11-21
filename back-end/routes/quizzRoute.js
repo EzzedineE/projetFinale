@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const quizzfCtrl = require('../controlors/quizz')
+const quizzfCtrl = require('../controlors/quizzCtrl')
 
 router.post('/', quizzfCtrl.createQuizz);
 router.delete('/:id', quizzfCtrl.deleteQuizz);

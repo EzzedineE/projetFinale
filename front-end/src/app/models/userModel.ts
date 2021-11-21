@@ -10,6 +10,7 @@ export class User {
   role: string;
   resultats: Resultat[];
   moyenne: number;
+  image: string;
 
   constructor(
     _id: string = '',
@@ -18,6 +19,7 @@ export class User {
     email: string = '',
     password: string = '',
     address: string = '',
+    image: string = '',
     role: string = 'user',
     resultats: Resultat[] = [],
     moyenne: number = 0
@@ -31,12 +33,6 @@ export class User {
       (this.role = role),
       (this.resultats = resultats),
       (this.moyenne = moyenne);
-  }
-}
-export class Image {
-  image: string;
-
-  constructor(image: string = '') {
     this.image = image;
   }
 }

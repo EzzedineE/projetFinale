@@ -4,7 +4,6 @@ import { UserService } from '../service/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
-import { Image } from '../models/userModel';
 
 @Component({
   selector: 'app-register',
@@ -12,6 +11,8 @@ import { Image } from '../models/userModel';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
+  selectedFile: File;
+  imgURL: any;
   user = new FormGroup({
     nom: new FormControl('', [Validators.required]),
     prenom: new FormControl('', [Validators.required]),
@@ -24,25 +25,41 @@ export class RegisterComponent implements OnInit {
     role: new FormControl('user'),
   });
   onFileChanged(event: any) {
-    const file = event.target.files[0];
+    this.selectedFile = event.target.files[0];
+    console.log(this.selectedFile);
+    var reader = new FileReader();
+    reader.readAsDataURL(this.selectedFile);
+    reader.onload = (_event) => {
+      this.imgURL = reader.result;
+    };
   }
-  onUpload(image: Image) {
-    this.services.onUpload(image).subscribe(
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
+  // onUpload(image: Image) {
+  //   this.services.onUpload(image).subscribe(
+  //     (res) => {
+  //       console.log(res);
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
   enregistrement() {
     if (this.user.valid) {
       const newUser = this.user.value;
       newUser.role = 'user';
       newUser.resultats = [];
       newUser.moyenne = 0;
-      this.services.register(newUser).subscribe(
+      const uploadData = new FormData();
+      uploadData.append('nom', newUser.nom);
+      uploadData.append('prenom', newUser.prenom);
+      uploadData.append('email', newUser.email);
+      uploadData.append('password', newUser.password);
+      uploadData.append('address', newUser.address);
+      uploadData.append('role', newUser.role);
+      uploadData.append('image', this.selectedFile);
+      console.log(uploadData);
+
+      this.services.register(uploadData).subscribe(
         (res) => {
           console.log(res);
           this.router.navigate(['login']);

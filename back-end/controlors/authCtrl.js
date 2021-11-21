@@ -1,42 +1,13 @@
 const User = require('../modeles/userModele')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const multer = require("multer")
-const path = require('path')
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
 
-        // Uploads is the Upload_folder_name
-        cb(null, "uploads")
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '_' + file.originalname)
-    }
-})
-var upload = multer({
-    storage: storage,
-    fileFilter: function (req, file, cb) {
-
-        // Set the filetypes, it is optional
-        var filetypes = /jpeg|jpg|png/;
-        var mimetype = filetypes.test(file.mimetype);
-
-        var extname = filetypes.test(path.extname(
-            file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-
-        cb("Error: File upload only supports the "
-            + "following filetypes - " + filetypes);
-    }
-
-    // mypic is the name of file attribute
-})
 
 exports.register = async (req, res, next) => {
-    console.log(req.body);
+
+    console.log('req.body:', req.body);
+    console.log('req.file:', req.file);
+
     User.findOne({ email: req.body.email })
         .then((userRes) => {
             if (userRes == null) {
@@ -44,18 +15,8 @@ exports.register = async (req, res, next) => {
                     .then(hash => {
                         const userBody = req.body
                         console.log(userBody);
-                        const fonc = upload.single("image");
-                        fonc(req, result, function (err) {
 
-                            if (err) {
-                                res.status(500).json(err)
-                            }
-                            else {
-                                console.log("result : ", result);
-                                res.status(201).json("Success, Image uploaded!")
-                            }
-                        })
-                        const user = new User({ ...userBody, password: hash })
+                        const user = new User({ ...userBody, password: hash, image: req.file.filename })
                         console.log(user);
                         user.save()
                             .then(() => res.status(201).json(user))
@@ -70,6 +31,7 @@ exports.register = async (req, res, next) => {
         .catch((err) => { res.status(500).json(err) })
 
 }
+
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {

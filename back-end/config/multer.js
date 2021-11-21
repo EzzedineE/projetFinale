@@ -1,3 +1,6 @@
+const express = require("express")
+const router = express.Router();
+const authCtrl = require('../controlors/authCtrl')
 const multer = require("multer")
 const path = require('path')
 var storage = multer.diskStorage({
@@ -31,16 +34,4 @@ var upload = multer({
 
     // mypic is the name of file attribute
 })
-
-exports.uploadSingle = async (req, res, next) => {
-    const fonc = upload.single("image");
-    fonc(req, res, function (err) {
-
-        if (err) {
-            res.status(500).json(err)
-        }
-        else {
-            res.status(201).json("Success, Image uploaded!")
-        }
-    })
-}
+module.exports = upload
